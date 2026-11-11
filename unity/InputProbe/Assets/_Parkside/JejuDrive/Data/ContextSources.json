@@ -1,0 +1,17 @@
+{
+  "source": "OpenStreetMap API 0.6 bounded map extracts",
+  "license": "ODbL 1.0",
+  "accessDate": "2026-11-06",
+  "files": {
+    "context-0.osm": "c99012590cbde0a4431b86738e9a2839e5df7f675f3660a11f345817f9bc50c5",
+    "context-1.osm": "87b7e01fa5ae2d16d35dd686c054306ab57748697166d2d136632a65e65ecedb",
+    "context-2.osm": "1fcecd8b385e150d1983212e6e90932683f01e39e746096dfd7b7b69e64db0a0",
+    "context-3.osm": "3b90f8c8bc34ec9e354d7c6db8d439ac1559b38801289f1ad6f26926ac980ef9",
+    "context-4.osm": "e6ad0fc5b1f9f122d540f74c44ef9838c8ed01bca6263d5e9d0a9fddeadc6038",
+    "context-5.osm": "6404a14f105c804cf82a940236a9c776622a9134baf2cb72ee000e4f12571489",
+    "context-6.osm": "5afb904ffbda0947ce747a54d22747af825ce43af10ddc975da2e05fec061b4e",
+    "context-7.osm": "3cf54fb3d09980eb7cb79078d442fb7aab3a76bd883498fe9e396bcd96bbd013",
+    "context-8.osm": "cec19e4e60ce776477b3c2ca30647e1335ed0a8b3f75c3632b82e9f2f0925333",
+    "context-9.osm": "3407a04f3feda138e17a70deee456ae42dbd01a4a64fe189f9dd748b8ef802e1"
+  }
+}
