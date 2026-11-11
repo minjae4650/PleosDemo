@@ -22,3 +22,5 @@
 gradlew text eol=lf
 *.jar binary
 *.png binary
+unity/InputProbe/Assets/_Parkside/Scenes/JejuCoastalDrive.unity filter=lfs diff=lfs merge=lfs -text
+unity/InputProbe/Assets/_Parkside/ParisDrive/Generated/Plane_Trees_Tree_crowns.asset filter=lfs diff=lfs merge=lfs -text
