@@ -1,5 +1,21 @@
 # PARKSIDE / PleosDemo
 
+## 공모전 제출 정보
+
+| 항목 | 내용 |
+|---|---|
+| 팀명 | (팀명) |
+| 앱 이름 | PARKSIDE |
+| 한 줄 소개 | 정차·주차 중 실제 핸들과 브레이크로 국내외 도시 도로를 달려 보는 차량용 운전 연습 앱 |
+| APK 위치 | `apk/(팀명)_PARKSIDE_release.apk` (release 빌드) |
+| 테스트 환경 | Windows 11 PC, Unity 2022.3.16f1(Windows 64-bit), Pleos AVD(`emulator-5554`) |
+
+**실행 방법**
+
+- PC: 아래 [PC에서 시작](#pc에서-시작)대로 Unity Hub에서 `unity/InputProbe`를 열고 씬을 Play한다.
+- 주행 씬: [부산 명소 순환](docs/busan-drive.md) · [제주 해안](docs/jeju-drive.md) · [파리 에펠탑](docs/paris-drive.md)
+- 차량(Pleos AVD): 위 APK를 설치하거나 아래 [Pleos AVD에서 시작](#pleos-avd에서-시작)대로 빌드한다. 자동 검사는 P단·속도 0 상태에서 진행한다.
+
 Pleos 입력으로 조작하는 Unity 주차 시뮬레이터의 개발 시작점이다. 현재 씬에는 테스트 맵·차량·Canvas UI가 있으며, 저속 이동과 입력 연결을 확인할 수 있다. 정밀 차량 물리·충돌·주차 판정은 다음 개발 범위다.
 
 ## PC에서 시작
@@ -18,6 +34,7 @@ Figma 기반 메뉴 5개 화면은 `MainMenu`의 `MenuCanvas`에서 편집한다
 
 제주 주행 시안은 별도 Scene `Assets/_Parkside/Scenes/JejuCoastalDrive.unity`다. 예래·중문 해안, 월평·강정 연결도로, 1100고지 부근을 실제 도로·고도로 구성했으며, 플레이어 주변에 각자 목적지를 가진 차량이 다닌다. [제주 Scene 실행·조작 안내](docs/jeju-drive.md)를 참고한다.
 - [파리 에펠탑 주행 씬](docs/paris-drive.md)
+- [부산 명소 순환 주행 씬](docs/busan-drive.md): `Assets/BusanEnvironment/Landmarks/BusanLandmarks.unity`. 해운대에서 출발해 광안대교 또는 광안리 해안을 지나 한 바퀴 도는 코스이며, 움직이는 차와 신호가 있다.
 
 ## Pleos AVD에서 시작
 
