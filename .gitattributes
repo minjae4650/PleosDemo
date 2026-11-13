@@ -22,3 +22,6 @@
 gradlew text eol=lf
 *.jar binary
 *.png binary
+
+# Busan landmark loop: the generator writes its meshes and colliders in Unity's binary format
+unity/InputProbe/Assets/BusanEnvironment/Landmarks/**/*.asset binary
