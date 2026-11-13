@@ -16,6 +16,9 @@ Figma 기반 메뉴 5개 화면은 `MainMenu`의 `MenuCanvas`에서 편집한다
 
 실사 재질과 조명을 확인하는 별도 Scene은 `Assets/_Parkside/Scenes/ParkingLookdev.unity`다. Play 후 1~4로 시점을 바꾸며 볼 수 있다. [작은 주차장 시각 검증 안내](docs/parking-lookdev.md)에 조작과 에셋 출처를 정리했다.
 
+제주 주행 시안은 별도 Scene `Assets/_Parkside/Scenes/JejuCoastalDrive.unity`다. 예래·중문 해안, 월평·강정 연결도로, 1100고지 부근을 실제 도로·고도로 구성했으며, 플레이어 주변에 각자 목적지를 가진 차량이 다닌다. [제주 Scene 실행·조작 안내](docs/jeju-drive.md)를 참고한다.
+- [파리 에펠탑 주행 씬](docs/paris-drive.md)
+
 ## Pleos AVD에서 시작
 
 Windows PowerShell 7 기준이다. APK 빌드에는 Unity Android Build Support·SDK/NDK/OpenJDK, Android SDK 플랫폼 34·37 및 Build Tools 34.0.0, 루트 Gradle용 JDK 25가 필요하다. 자동 검사와 PC 콘솔에는 Python 3.9 이상을 사용한다. 같은 프로젝트를 Unity Editor에서 닫고 저장소 루트에서 실행한다.
