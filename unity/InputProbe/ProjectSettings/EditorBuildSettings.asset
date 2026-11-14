@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Parkside/Scenes/ParkingPractice.unity
     guid: 4bb3e20def295a04a84247b160717891
+  - enabled: 0
+    path: Assets/BusanEnvironment/Landmarks/BusanLandmarks.unity
+    guid: d78d51aff48d9174187b69cd6fecdf52
   m_configObjects: {}

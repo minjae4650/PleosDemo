@@ -247,3 +247,46 @@ KeyboardInputSource의 기본 키는 W=가속, Space=브레이크, Left/Right Ar
 `PracticeCanvas/DebugPanel` 아래의 Text·Image·Button을 Scene에서 편집한다. 위치·크기·폰트·색상·고정 문구는 각 컴포넌트의 Inspector 값이다. `PracticeHud`는 런타임 수치·상태만 갱신한다. 버튼의 On Click은 GameManager 또는 VehicleCamera의 공개 메서드로 씬에 연결되어 있다.
 
 `EventSystem.Send Navigation Events=false`, 버튼 Navigation=None은 Space 제동·좌우 조향이 UI 버튼 제출·탐색과 충돌하지 않기 위한 설정이다. UI를 바꿀 때도 이 키를 차량 입력과 중복 사용하지 않는다. uGUI 1.0.0 패키지는 Packages 목록과 함께 공유한다.
+
+**12. 부산 드라이브 슬라이스 (2026-11-08 추가, 2026-11-09 v2)**
+
+공모전 데모용 주행 씬은 `Assets/_Parkside/Scenes/BusanDrive.unity`다. 마린시티1로 서쪽 끝 출발 → 해운대해변로 → 광안대교 현수 구간 → 광안해변로 북상의 약 10km 단일 코스이며, OSM 기반 실좌표(1:1 미터)를 사용한다. 코스 450m 안의 실제 도로망(곁길)과 건물 풋프린트가 함께 생성된다. 교량 높이·주탑·추정 건물 높이는 설계값이고 실측이 아니다. 낮 조명이다.
+
+- **빌드 목록에는 `enabled: 0`으로 들어 있다.** `Assets/BusanEnvironment`는 git에 추적되지 않으므로 활성 상태로 목록만 공유되면 Android 빌드 검증기가 멈춘다. 빌더도 항상 비활성으로 등록한다. PC 빌드에 넣으려면 팀 합의 후 직접 켠다. 검증은 `PracticeSceneValidator.ValidateScene`을 직접 호출한다(빌더가 끝에 실행한다).
+- 데이터 재생성 순서(저장소 루트): `py -3 tools/fetch-busan-slice-landcover.py`(캐시 없을 때만) → `py -3 tools/prepare-busan-slice.py`(코스·도로망·지면·건물 JSON과 평면도 PNG) → `py -3 tools/make-busan-slice-textures.py`(파사드 크롭·간판 아틀라스).
+- 씬 재생성: Unity 메뉴 `Busan/Build drive slice scene`. 매번 `ParkingPractice.unity`를 파일 복사로 덮어쓴(GUID 유지) 뒤 전체를 다시 배선한다. 메시는 범주별 컨테이너 asset(`GeneratedSlice/Meshes`)이다.
+- 조작(v3): 부산 씬만 `DriveKeyboardSource`를 쓴다(주차 씬의 `KeyboardInputSource` W/Space 규약은 그대로). W/↑ 가속, S/↓ 제동 겸 후진, Space 제동만, ←→/A/D 조향. 정지 상태에서 S를 새로 누르면 즉시 후진, 눌러서 멈춘 뒤 계속 누르면 0.8초 후 후진, 후진 중 S는 약 11km/h, W는 제동이며 정지 후 같은 규칙으로 전진 복귀. 조작 안내 팝업은 기본 숨김(G로 표시). 이전 기록: W 가속, Space 제동, ←→ 조향, V 시점, **R 코스 복귀(막다른 길·범위 이탈 탈출구)**, T 자동주행, 1~5 점프, G 안내. PC 런타임에서만 `DriveAssist`가 그림자를 켜고 종료 시 복원한다(전역 품질값이라 주차 씬에 새면 안 된다). 모바일은 후처리를 끈다.
+- `VehicleController` 확장 필드(brakeDeceleration, highSpeedSteeringAngle, maxLateralAcceleration, steeringResponse, groundFollow, groundMask, SpeedCap)는 **기본값이 모두 "끔"이라 기존 주차 동작과 같다.** BusanDrive 씬의 차량 인스턴스에만 오버라이드가 걸려 있다. `groundFollow`는 현재 높이에 가장 가까운 면(±1.2m)만 지면으로 보고, 도로 끝에서는 ±10~50도 방향으로 미끄러진다. 도로 콜라이더는 레이어 30이다.
+- 메뉴 연결은 아직 없다. 부산 카드를 `ParksideMenu`에 붙일 때 주의: `PARKSIDE/Author Figma menu scene`을 실행하면 **EditorBuildSettings 씬 목록을 MainMenu·ParkingPractice 두 개로 덮어쓴다.** 부산 씬을 포함하려면 실행 후 다시 추가한다.
+- **합치는 순서(2026-11-10):**
+  1. 부산 쪽 커밋에 `Assets/BusanEnvironment`(메시 포함 약 198MB, 100MB 넘는 단일 파일 없음), `Assets/BusanEnvironment.meta`, `Assets/_Parkside/Scenes/BusanDrive.unity`와 `.meta`, `tools/`, `docs/`를 모두 넣는다. 씬만 올라가면 메시 참조가 비어 분홍색 또는 빈 씬이 된다.
+  2. 충돌이 날 수 있는 추적 파일은 셋이다: `ProjectSettings/EditorBuildSettings.asset`(씬 목록 3줄 추가), `Assets/_Parkside/Scripts/Vehicle/VehicleController.cs`(기본값이 전부 꺼진 필드 추가), `docs/team-handoff.md`. 제주 씬도 목록에 들어가므로 양쪽 씬 줄을 모두 남긴다.
+  3. 합친 PC에서 `PARKSIDE → Validate scene and input`을 돌린 뒤 빌드 목록의 BusanDrive를 켠다. 켜면 Android 빌드 검증이 이 씬도 검사한다.
+  4. 메뉴 카드는 `SceneManager.LoadSceneAsync("BusanDrive")`로 연다. 빌드 목록에서 꺼져 있으면 런타임에 씬을 찾지 못한다.
+  5. 도로 레이어는 30번이다. 제주 맵이 같은 번호를 쓰면 씬이 달라 충돌은 없지만 `groundMask`는 각 씬 차량에서 확인한다.
+- **PC 실행 파일 확인 결과(2026-11-10):** Windows 빌드 241MB, 빌드 오류·경고 0건, 실행 로그에 스크립트·셰이더 오류 없음, Intel Iris Xe 1280x720 창에서 30fps(상한 30). **Android APK는 아직 한 번도 빌드하지 않았다.** 부산 담당 PC에는 Android 모듈이 없다. 정적 삼각형 69만 개에 교통 106만 개, 주차 193만 개라 AVD에서는 그대로 돌리기 무겁다고 봐야 하고, 측정값은 없다. 또 Android 입력에는 후진이 없고 키보드의 R(코스 복귀)도 없어서, 도로 끝에 닿으면 빠져나올 수단이 없다.
+- 창이 포커스를 잃거나 입력이 끊겨 GameManager가 멈추면 `DriveAssist`가 둘 다 돌아왔을 때 다시 시작한다. H로 패널을 띄워 `Pause`를 누른 경우에는 멈춘 채로 있다.
+- 도로망(v3): `tools/prepare-busan-slice.py`가 서비스 도로(골목, 폭 4~6m, 건물 벽 여유 2.2m 이상만), 코스 옆 나란한 도로 처리, 합성 끝점(`net.mouths`), 간선 폐쇄 표시(`net.closures`: 주황-흰 PE 방호벽과 러버콘)를 만든다. 검증은 `py -3 tools/check-busan-network.py`(종료 코드 0)와 Unity `sweep`의 `REACH roads=a/b`. 코스(9839.5m, 점프 s)는 바뀌지 않는다.
+- 차량(v3): 빌드 때 `GeneratedSlice/TrafficCars/*.prefab`에 차종별 구운 프리팹(메시 1개, 정점색, `CarBaked` 셰이더, LODGroup 2%)을 만든다. 원본 prefab, 메시, 재질은 읽기만 한다. 교통은 `RouteTraffic`(풀 34, 교차로 없는 차 14대), 주차는 최대 70대.
+- **도로망(v4, 2026-11-10): SUMO netconvert로 만든다.** 교차로 면(모서리 곡선), 차로, 인도와 연석, 횡단보도, 정지선, 차선 도색, 신호 위치와 신호 주기가 여기서 나온다. 고가 코스(광안대교와 진입 고가)만 예전 리본으로 남는다.
+  - 다시 만드는 순서(저장소 루트): `py -3 tools/prepare-busan-slice.py` → SUMO 환경의 Python으로 `tools/build-busan-sumo-net.py` → 같은 Python으로 `tools/export-busan-sumo-geometry.py` → Unity `Busan/Build drive slice scene`. 결과 `Editor/Data/BusanSumoGeometry.json`이 있으면 빌더가 SUMO 도로를 쓰고, 없으면 예전 도로를 쓴다.
+  - SUMO 환경: `py -3 -m venv <폴더>` 후 `pip install eclipse-sumo==1.28.0 sumolib==1.28.0 shapely==2.2.0 mapbox-earcut==2.1.0`. **netconvert는 설치 경로에 한글이 있으면 "unknown error"로 멈춘다.** 패키지의 `sumo` 폴더를 영문 경로(예: `C:\c\sumo-1.28`)에 복사하고 `BUSAN_SUMO_HOME`을 그 경로로 지정한다. SUMO는 EPL-2.0이며 생성물만 저장소에 들어간다.
+  - 신호: `TrafficSignals`가 SUMO 고정 주기 신호를 돌리고 램프는 셰이더 하나(`SignalLamp`)로 켠다. 다른 차는 빨간불과 먼 노란불에 정지선 앞에서 멈춘다. 내 차는 강제로 세우지 않는다.
+  - 건물: 파사드는 대지에서 가장 높은 지면부터 시작하고 낮은 쪽은 콘크리트 기단이다. 맵 가장자리 빈 땅에는 추정 건물(실제 건물 아님)을 채운다.
+  - 프리팹: 생성 결과는 범주별 프리팹(`GeneratedSlice/Prefabs/*.prefab`)으로 저장되고 씬에는 그 인스턴스가 들어간다. 다시 빌드하면 덮어쓰므로 손으로 고친 내용은 빌더나 데이터에 반영해야 남는다.
+  - 재질: 인도 보도블록과 기단 콘크리트는 Poly Haven CC0 텍스처(`GeneratedSlice/tex/ph`, 출처 `CREDITS.txt`)다.
+  - **v5(2026-11-10 새벽), 실제 거리 모습 반영.** 기준은 카카오 로드뷰 관찰이며 사진은 저장하지 않았다. 기준표는 `부산맵_화면확인/v5_맵점검/실제모습_기준표.md`에 있다.
+    - 주택가 이면도로: 보도가 없고 중앙선이 없다. 가장자리에 노란 실선이 있고, 아스팔트가 건물 앞까지 8 m 이어진다(`Apron`, 주행면 아님).
+    - 큰길: 보도블록이 상가 앞까지 6 m 이어진다(`Frontage`). 포장 바깥 가장자리는 1.6 m 경사로 떨어진다.
+    - 골목 빌라 줄짓기: 코스 700 m 안의 이면도로를 따라 추정 빌라(실제 건물 아님)를 세우고, 45%는 1층 필로티 주차장이다(`BusanSliceFiller.AddStreetRows`).
+    - 거리 시설: 횡단보도 끝에 노란 점자블록과 볼라드, 큰길 가로수 9~12 m 간격과 보호틀, 맨홀과 보수 패치, 건물 밑동 어둡게(그림자 꺼진 안드로이드용).
+    - 차도에 0.8 m 넘게 들어온 OSM 건물은 짓지 않는다(11동).
+    - 내보내기는 `BusanSliceGround.json`도 읽는다(바다·모래사장 위에 포장하지 않음). `prepare-busan-slice.py`를 다시 돌렸다면 내보내기도 다시 돌린다.
+  - **주행 점검 봇:** 브리지 명령 `play <초> <폴더> courserun [warp=<n>] [from=<m>]`은 플레이어 컨트롤러로 코스를 끝까지 운전한다. 범프, 피치 점프, 도로 이탈, 막힘, 차로 이탈, 교통 대기 시간을 보고한다. 맵을 고치면 이것과 92곳 카메라 비교를 함께 돌린다.
+  - 신호 주기: 녹색 14초, 황색 3초, 전적색 2초 이하이고 주기는 64초 이하다. 단계가 많은 신호 2개는 126초까지 남는다. 빨간불에 서 있는 차 뒤에서는 내 차가 통과하지 않고 기다린다(70초가 넘으면 통과).
+- 차량 앞뒤 규칙: 구운 차는 전부 로컬 +Z가 앞이다(교통과 주차 모두 +Z 방향으로 놓는다). 원본 모델의 앞이 -Z면 `BusanSliceVehicles.cs`의 `CarSpec.noseAtMinusZ`를 켠다(현재 Tucson, i30, Azera, Ioniq5). 부품 이름에 전조등 표시가 없는 모델이 있어 Unity 메뉴가 아닌 눈으로 확인해야 한다. 새 차종을 넣으면 앞과 뒤에서 한 번씩 찍어 본다.
+- **v3에서 새로 쓰는 차량 모델 출처(전부 독립 제작자의 3D 모델이며 Hyundai 공식 자산이 아니다, 변경 사항: 여러 부품을 한 메시로 합치고 재질 값을 정점색으로 구움, 유리는 불투명 어두운 값으로 교체, 도장 부분만 색 교체, Ioniq 5는 제작자 이름이 적힌 번호판 글자 부품을 빼고 한국식 번호판으로 교체)**
+  - Hyundai Porter II: **max7th**, https://www.thingiverse.com/thing:4685394 , CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). 원 STL 부품을 조립, 재질 분리, 타이어 삼각형 축소한 파생(`CloudPilot/ParkingContext20261105/PorterData/CREDITS.txt`). 교통 최대 2대.
+  - Hyundai Ioniq 5 2022: 원작 **andikapratamaw** (https://sketchfab.com/3d-models/hyundai-ioniq-5-lowpoly-675e78311e8440d88714bd212cb7a8fb , CC BY 4.0), OpenX 변환 **Dogan Ulus / VevaLabs** (MPL-2.0 AND CC-BY-4.0, https://github.com/vevalabs/openx-assets/releases/tag/20261015). `ParkingLotEnvironment/CREDITS.md` 참고.
+  - Hyundai Azera 2009 (저폴리 LOD1 형상): **Nieve5677**, https://sketchfab.com/3d-models/711b67ea05f9441a863dce4badaca660 , CC BY 4.0. 택시는 같은 Azera 메시에 절차 생성한 지붕 표시등(로고, 실제 상호 없음)을 더한 것.
+  - 이미 쓰던 모델의 LOD1 형상도 같은 출처다: Hyundai Tucson 2015 **razor24**, Hyundai i30 2011 **D3NK**, 박스트럭 LCT 3000 '95 **Daniel Zhabotinsky**(전부 CC BY 4.0). 전체 표기는 `ParkingLotEnvironment/VEHICLE-SOURCES.md`, `CREDITS.md`.
