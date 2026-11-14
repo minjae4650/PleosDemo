@@ -1,13 +1,13 @@
-# PARKSIDE / PleosDemo
+# 파킹 트래블 / PleosDemo
 
 ## 공모전 제출 정보
 
 | 항목 | 내용 |
 |---|---|
 | 팀명 | (팀명) |
-| 앱 이름 | PARKSIDE |
+| 앱 이름 | 파킹 트래블 |
 | 한 줄 소개 | 정차·주차 중 실제 핸들과 브레이크로 국내외 도시 도로를 달려 보는 차량용 운전 연습 앱 |
-| APK 위치 | `apk/(팀명)_PARKSIDE_release.apk` (release 빌드) |
+| APK 위치 | `apk/(팀명)_파킹트래블_release.apk` (release 빌드) |
 | 테스트 환경 | Windows 11 PC, Unity 2022.3.16f1(Windows 64-bit), Pleos AVD(`emulator-5554`) |
 
 **실행 방법**
